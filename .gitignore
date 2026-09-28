@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# material de trabajo local
+/.scratch/
+/.playwright-mcp/

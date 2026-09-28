@@ -1,0 +1,89 @@
+{
+  "hero": {
+    "desktop": {
+      "av1": "/media/hero-1280.av1.mp4",
+      "h264": "/media/hero-1280.mp4",
+      "poster": {
+        "width": 1280,
+        "height": 720,
+        "variants": [
+          {
+            "w": 640,
+            "avif": "/media/hero-poster-640.avif",
+            "webp": "/media/hero-poster-640.webp"
+          },
+          {
+            "w": 960,
+            "avif": "/media/hero-poster-960.avif",
+            "webp": "/media/hero-poster-960.webp"
+          },
+          {
+            "w": 1280,
+            "avif": "/media/hero-poster-1280.avif",
+            "webp": "/media/hero-poster-1280.webp"
+          }
+        ]
+      }
+    },
+    "mobile": {
+      "av1": "/media/hero-576.av1.mp4",
+      "h264": "/media/hero-576.mp4",
+      "poster": {
+        "width": 576,
+        "height": 720,
+        "variants": [
+          {
+            "w": 576,
+            "avif": "/media/hero-poster-m-576.avif",
+            "webp": "/media/hero-poster-m-576.webp"
+          }
+        ]
+      }
+    }
+  },
+  "cover": {
+    "width": 668,
+    "height": 1028,
+    "variants": [
+      {
+        "w": 360,
+        "avif": "/media/portada-360.avif",
+        "webp": "/media/portada-360.webp"
+      },
+      {
+        "w": 520,
+        "avif": "/media/portada-520.avif",
+        "webp": "/media/portada-520.webp"
+      },
+      {
+        "w": 668,
+        "avif": "/media/portada-668.avif",
+        "webp": "/media/portada-668.webp"
+      }
+    ],
+    "lqip": "data:image/webp;base64,UklGRqwAAABXRUJQVlA4IKAAAACwBgCdASoYACUAPs1WoE2npSMiOrzIAPAZiWYAzfN1egBhHkG9/Vzhxum2E7srzH2NEaOzbt91cpDqYD7rAAD+9X81MCd1pnzxgy7PyyhaNyKVOFLmZaitpOo4E5s9ue1Cx+uS8G9tZfrZnwQe7HBPjkOFITlK0z4bxadg6tKBomx0y1H5NBaH8nwUq7Ym/vPCNTefl/kbgYEGzwgusAAA"
+  },
+  "mockup": {
+    "width": 1240,
+    "height": 1269,
+    "variants": [
+      {
+        "w": 480,
+        "avif": "/media/libro-mockup-480.avif",
+        "webp": "/media/libro-mockup-480.webp"
+      },
+      {
+        "w": 800,
+        "avif": "/media/libro-mockup-800.avif",
+        "webp": "/media/libro-mockup-800.webp"
+      },
+      {
+        "w": 1240,
+        "avif": "/media/libro-mockup-1240.avif",
+        "webp": "/media/libro-mockup-1240.webp"
+      }
+    ],
+    "lqip": "data:image/webp;base64,UklGRo4AAABXRUJQVlA4IIIAAAAwBQCdASoYABkAPu1wsVKppiSiqAgBMB2JYgCsMoABfTvRkkfr0CTp9BNBLp1B4gh3IAD+5f/e/9SwIZC45JpxloaSu95EGN91B/BU4fLABiitoaipIgwXXmA+5PEwsEZSkKIL2KyxnbmMYNwN1HW33svasv8rEbWJ2laVqTIW47AA",
+    "jpg": "/media/libro-mockup.jpg"
+  }
+}
