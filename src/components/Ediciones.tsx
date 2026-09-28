@@ -152,19 +152,22 @@ function Tarjeta({ e, i, unica, activa, cantidad }: { e: Edicion; i: number; uni
         )}
 
         <div className="mt-8 grid gap-6 border-t border-line pt-6 sm:grid-cols-2 sm:items-end">
-          <div>
-            <p className="hud">Precio</p>
-            {unitario ? (
-              <p className="mt-2 flex items-baseline gap-3">
-                <span className="font-display text-4xl font-bold text-bone tabular-nums">{unitario}</span>
-                {antes && <s className="font-mono text-sm text-dim">{antes}</s>}
-              </p>
-            ) : (
-              <Pendiente dato="precio" className="mt-2" />
-            )}
-          </div>
-          <div className="sm:justify-self-end">
-            <p className="hud mb-2 sm:text-right">Cantidad</p>
+          {/* Sin precio configurado no se publica el rótulo vacío (en desarrollo, el aviso) */}
+          {(unitario || IS_DEV) && (
+            <div>
+              <p className="hud">Precio</p>
+              {unitario ? (
+                <p className="mt-2 flex items-baseline gap-3">
+                  <span className="font-display text-4xl font-bold text-bone tabular-nums">{unitario}</span>
+                  {antes && <s className="font-mono text-sm text-dim">{antes}</s>}
+                </p>
+              ) : (
+                <Pendiente dato="precio" className="mt-2" />
+              )}
+            </div>
+          )}
+          <div className={unitario || IS_DEV ? 'sm:justify-self-end' : ''}>
+            <p className={`hud mb-2 ${unitario || IS_DEV ? 'sm:text-right' : ''}`}>Cantidad</p>
             <Cantidad
               valor={cantidad}
               onChange={(n) => {

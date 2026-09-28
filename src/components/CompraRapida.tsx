@@ -6,6 +6,7 @@ import { checkout, confianza, ediciones, libro } from '@/data/libro'
 import { precio } from '@/lib/format'
 import { media } from '@/lib/media'
 import { pedido, usePedido } from '@/lib/pedido'
+import { IS_DEV } from '@/lib/site'
 import { useCheckout } from '@/lib/useCheckout'
 import { BotonCheckout } from './ui/BotonCheckout'
 import { Cantidad } from './ui/Cantidad'
@@ -134,15 +135,18 @@ export function CompraRapida() {
               <p className="hud mb-2">Cantidad</p>
               <Cantidad valor={cantidad} onChange={(n) => pedido.cantidad(n)} />
             </div>
-            <div className="text-right">
-              <p className="hud mb-2">{cantidad > 1 ? 'Total' : 'Precio'}</p>
-              {total ? (
-                <p className="font-display text-3xl font-bold text-bone tabular-nums">{total}</p>
-              ) : (
-                <Pendiente dato="precio" />
-              )}
-              {unitario && cantidad > 1 && <p className="mt-1 font-mono text-xs text-dim">{unitario} c/u</p>}
-            </div>
+            {/* Sin precio configurado no se muestra el rótulo vacío (en desarrollo, el aviso) */}
+            {(total || IS_DEV) && (
+              <div className="text-right">
+                <p className="hud mb-2">{cantidad > 1 ? 'Total' : 'Precio'}</p>
+                {total ? (
+                  <p className="font-display text-3xl font-bold text-bone tabular-nums">{total}</p>
+                ) : (
+                  <Pendiente dato="precio" />
+                )}
+                {unitario && cantidad > 1 && <p className="mt-1 font-mono text-xs text-dim">{unitario} c/u</p>}
+              </div>
+            )}
           </div>
 
           <div className="mt-auto">
