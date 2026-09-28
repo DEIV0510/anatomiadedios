@@ -72,7 +72,7 @@ export function Navbar() {
       />
       <nav
         aria-label="Principal"
-        className="wrap relative flex h-[var(--nav-h)] items-center gap-5 transition-[height] duration-500 ease-[var(--ease-out)] group-data-[scrolled=true]:h-[var(--nav-h-min)]"
+        className="wrap relative flex h-[var(--nav-h)] max-w-none items-center gap-5 transition-[height] duration-500 ease-[var(--ease-out)] group-data-[scrolled=true]:h-[var(--nav-h-min)]"
       >
         <a href={`#${anclas.inicio}`} className="group/logo mr-auto flex min-h-11 items-center gap-3" aria-label={`${libro.titulo}, inicio`}>
           <Marca className="size-8 shrink-0 text-bone transition-transform duration-500 group-hover/logo:rotate-180" />

@@ -86,7 +86,7 @@ export function Hero() {
       {/* ---------- Contenido ---------- */}
       {/* Anclado desde arriba (no con mt-auto): si al cargar la fuente cambia la altura del
           bloque, no se desplaza todo el texto (CLS) */}
-      <div className="wrap relative z-10 pt-[max(calc(var(--nav-h)+8rem),calc(100svh-22.5rem))] pb-[max(2.25rem,env(safe-area-inset-bottom))] md:pt-[max(calc(var(--nav-h)+3rem),calc(50svh-15.5rem))] md:pb-24">
+      <div className="wrap relative z-10 max-w-none pt-[max(calc(var(--nav-h)+8rem),calc(100svh-22.5rem))] pb-[max(2.25rem,env(safe-area-inset-bottom))] md:pt-[max(calc(var(--nav-h)+3rem),calc(50svh-15.5rem))] md:pb-24">
         <div className="max-w-[37rem] lg:max-w-[40rem]">
           <p className="hud hero-rise flex items-center gap-3 whitespace-nowrap" style={{ '--d': '0s' } as React.CSSProperties}>
             <span aria-hidden className="size-1.5 animate-pulse bg-neon shadow-[0_0_10px_var(--color-neon)]" />
