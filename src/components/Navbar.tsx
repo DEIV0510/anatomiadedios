@@ -76,7 +76,7 @@ export function Navbar() {
       >
         <a href={`#${anclas.inicio}`} className="group/logo mr-auto flex min-h-11 items-center gap-3" aria-label={`${libro.titulo}, inicio`}>
           <Marca className="size-8 shrink-0 text-bone transition-transform duration-500 group-hover/logo:rotate-180" />
-          <span className="hidden font-display text-[0.8rem] font-bold tracking-[0.2em] text-bone min-[400px]:inline">
+          <span className="hidden font-display text-[0.8rem] font-bold tracking-[0.2em] whitespace-nowrap text-bone min-[400px]:inline lg:max-xl:hidden">
             {libro.titulo}
           </span>
         </a>
@@ -87,12 +87,12 @@ export function Navbar() {
               <a
                 href={`#${l.id}`}
                 aria-current={activo === l.id ? 'location' : undefined}
-                className="group/link relative flex min-h-11 items-center px-3 font-mono text-[0.7rem] tracking-[0.2em] text-mist uppercase transition-colors hover:text-neon aria-[current=location]:text-neon"
+                className="group/link relative flex min-h-11 items-center px-2 font-mono text-[0.68rem] tracking-[0.18em] whitespace-nowrap text-mist uppercase transition-colors hover:text-neon aria-[current=location]:text-neon xl:px-3 xl:text-[0.7rem] xl:tracking-[0.2em]"
               >
                 {l.label}
                 <span
                   aria-hidden
-                  className="absolute inset-x-3 bottom-2 h-px origin-left scale-x-0 bg-neon shadow-[0_0_8px_var(--color-neon)] transition-transform duration-300 group-hover/link:scale-x-100 group-aria-[current=location]/link:scale-x-100"
+                  className="absolute inset-x-2 bottom-2 xl:inset-x-3 h-px origin-left scale-x-0 bg-neon shadow-[0_0_8px_var(--color-neon)] transition-transform duration-300 group-hover/link:scale-x-100 group-aria-[current=location]/link:scale-x-100"
                 />
               </a>
             </li>

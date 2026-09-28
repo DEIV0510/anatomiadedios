@@ -104,11 +104,11 @@ export const ejes = [
 // ---------------------------------------------------------------------------------------------
 export const portadaCapas = [
   { id: 'universo', rotulo: 'UNIVERSO', detalle: 'Estrellas y geometría', x: 0.83, y: 0.1, lado: 'derecha' },
-  { id: 'energia', rotulo: 'ENERGÍA', detalle: 'El haz de luz que lo atraviesa', x: 0.5, y: 0.33, lado: 'derecha' },
-  { id: 'rostro', rotulo: 'ROSTRO HUMANO', detalle: 'Ojos cerrados, mirada interior', x: 0.37, y: 0.49, lado: 'izquierda' },
+  { id: 'energia', rotulo: 'ENERGÍA', detalle: 'El haz de luz central', x: 0.5, y: 0.33, lado: 'derecha' },
+  { id: 'rostro', rotulo: 'ROSTRO HUMANO', detalle: 'Mirada interior', x: 0.37, y: 0.49, lado: 'izquierda' },
   { id: 'naturaleza', rotulo: 'NATURALEZA', detalle: 'Árbol, agua, montaña', x: 0.84, y: 0.6, lado: 'derecha' },
-  { id: 'ciudad', rotulo: 'MUNDO MODERNO', detalle: 'La ciudad que se desintegra', x: 0.1, y: 0.66, lado: 'izquierda' },
-  { id: 'conexion', rotulo: 'CONEXIÓN ESPIRITUAL', detalle: 'La luz que nace en el pecho', x: 0.49, y: 0.84, lado: 'izquierda' },
+  { id: 'ciudad', rotulo: 'MUNDO MODERNO', detalle: 'Ciudad en fragmentos', x: 0.1, y: 0.66, lado: 'izquierda' },
+  { id: 'conexion', rotulo: 'CONEXIÓN ESPIRITUAL', detalle: 'La luz del pecho', x: 0.49, y: 0.84, lado: 'izquierda' },
 ] as const
 
 // ---------------------------------------------------------------------------------------------

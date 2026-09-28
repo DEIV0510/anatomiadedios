@@ -90,7 +90,7 @@ export function MasQueUnLibro() {
                           {
                             left: `${c.x * 100}%`,
                             top: `${c.y * 100}%`,
-                            '--reach': `calc(var(--w) * ${c.lado === 'izquierda' ? c.x : 1 - c.x} + 3.5rem)`,
+                            '--reach': `calc(var(--w) * ${c.lado === 'izquierda' ? c.x : 1 - c.x} + 2.5rem)`,
                           } as React.CSSProperties
                         }
                       >
@@ -107,10 +107,10 @@ export function MasQueUnLibro() {
             </div>
           </div>
 
-          {/* Leyenda (móvil y tableta; en escritorio los rótulos van sobre el libro) */}
-          <ol className="mt-10 grid grid-cols-1 gap-px border border-line bg-line sm:grid-cols-2 lg:sr-only">
+          {/* Leyenda (hasta 1279 px; en pantallas anchas los rótulos van sobre el libro) */}
+          <ol className="mt-10 grid grid-cols-1 gap-px border border-line bg-line sm:grid-cols-2 xl:sr-only" data-reveal>
             {portadaCapas.map((c, i) => (
-              <li key={c.id} className="flex items-baseline gap-4 bg-void px-4 py-3.5" data-reveal>
+              <li key={c.id} className="flex items-baseline gap-4 bg-void px-4 py-3.5">
                 <span className="font-mono text-xs text-neon">{String(i + 1).padStart(2, '0')}</span>
                 <span>
                   <span className="block font-mono text-[0.72rem] tracking-[0.2em] text-bone uppercase">{c.rotulo}</span>

@@ -162,7 +162,8 @@ function libroScroll() {
 
   const notas = q('[data-note]', sec)
   const lineas = q('[data-note-line]', sec)
-  const tl = gsap.timeline({ scrollTrigger: { trigger: libro, start: 'top 72%', end: 'bottom 55%', scrub: 0.6 } })
+  // Terminan de aparecer cuando el libro llega al centro de la pantalla
+  const tl = gsap.timeline({ scrollTrigger: { trigger: libro, start: 'top 80%', end: 'center 58%', scrub: 0.6 } })
   tl.from(notas, { autoAlpha: 0, stagger: 0.18, duration: 0.3 }).from(lineas, { scaleX: 0, stagger: 0.18, duration: 0.3 }, 0.05)
 }
 

@@ -592,7 +592,7 @@
   .note__sub {
     top: 0.15rem;
   }
-  @media (max-width: 63.99rem) {
+  @media (max-width: 79.99rem) {
     .note__line,
     .note__label,
     .note__sub {
