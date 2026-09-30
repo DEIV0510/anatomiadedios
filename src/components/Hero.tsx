@@ -57,7 +57,7 @@ export function Hero() {
       <canvas
         data-rain="hero"
         aria-hidden
-        className="code-rain z-0 opacity-20 [mask-image:linear-gradient(0deg,#000_0%,#000_22%,transparent_50%)] md:opacity-35 md:[mask-image:linear-gradient(90deg,#000_0%,#000_18%,transparent_46%)]"
+        className="code-rain top-auto! bottom-0 z-0 h-1/2! opacity-20 [mask-image:linear-gradient(0deg,#000_0%,#000_44%,transparent_100%)] md:top-0! md:h-full! md:w-1/2! md:opacity-35 md:[mask-image:linear-gradient(90deg,#000_0%,#000_36%,transparent_92%)]"
       />
 
       {/* Partículas */}
@@ -65,15 +65,13 @@ export function Hero() {
         {PARTICULAS.map((p, i) => (
           <span
             key={i}
-            className={`particle ${i % 2 ? 'max-md:hidden' : ''}`}
+            className={`particle ${p.x < 0 ? 'particle--izq' : ''} ${i % 2 ? 'max-md:hidden' : ''}`}
             style={
               {
                 left: `${p.l}%`,
                 bottom: `${p.b}%`,
                 '--t': `${p.t}s`,
                 '--d': `${p.d}s`,
-                '--x': `${p.x}px`,
-                '--o': p.o,
               } as React.CSSProperties
             }
           />
@@ -138,7 +136,10 @@ export function Hero() {
         style={{ '--d': '0.6s' } as React.CSSProperties}
       >
         <span className="hud text-[0.62rem]">Desliza para despertar</span>
-        <ChevronDown aria-hidden className="size-4 animate-bounce" strokeWidth={1.5} />
+        {/* El rebote va en un span, no en el <svg>: así se compone en la GPU */}
+        <span aria-hidden className="block motion-safe:animate-bounce">
+          <ChevronDown className="size-4" strokeWidth={1.5} />
+        </span>
       </a>
     </section>
   )

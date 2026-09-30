@@ -1,9 +1,13 @@
 import { ArrowRight } from 'lucide-react'
+import { ediciones } from '@/data/libro'
 import { anclas } from '@/lib/site'
+
+// Los CTA de «Comprar el libro» siempre abren la compra rápida con el libro elegido
+const LIBRO_ID = ediciones.find((e) => e.tipo === 'libro')?.id ?? ''
 
 type Props = {
   children?: React.ReactNode
-  /** Edición que se preselecciona en la compra rápida */
+  /** Edición que se preselecciona en la compra rápida (por defecto, el libro) */
   edicion?: string
   size?: 'md' | 'xl'
   className?: string
@@ -15,7 +19,7 @@ type Props = {
  * CTA principal. Sin JS lleva a las ediciones; con JS abre la compra rápida (el panel escucha
  * los clics en [data-comprar]). Borde neón con una luz que lo recorre.
  */
-export function BotonComprar({ children = 'Comprar', edicion = '', size = 'md', className = '', label }: Props) {
+export function BotonComprar({ children = 'Comprar', edicion = LIBRO_ID, size = 'md', className = '', label }: Props) {
   return (
     <a
       href={`#${anclas.ediciones}`}
@@ -30,11 +34,7 @@ export function BotonComprar({ children = 'Comprar', edicion = '', size = 'md', 
   )
 }
 
-/** Luz que recorre el borde (pathLength normaliza la velocidad) */
+/** Luz que recorre el borde (degradado cónico que gira bajo una máscara de anillo, en GPU) */
 export function Trace() {
-  return (
-    <svg className="btn-trace" aria-hidden focusable="false">
-      <rect width="100%" height="100%" pathLength={100} />
-    </svg>
-  )
+  return <span className="btn-trace" aria-hidden />
 }

@@ -40,10 +40,13 @@ export function BarraMovil() {
       aria-hidden={!visible}
       inert={!visible}
       className={`fixed inset-x-0 bottom-0 z-[45] border-t border-line-2 bg-void/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-md transition-transform duration-500 ease-[var(--ease-out)] md:hidden ${visible ? 'translate-y-0' : 'translate-y-[110%]'}`}
+      data-barra
     >
       <div className="flex h-16 items-center gap-3 px-4">
         <div className="min-w-0 flex-1">
-          <p className="truncate font-display text-[0.85rem] font-bold tracking-[0.08em] text-bone">{libro.titulo}</p>
+          <p className="truncate font-display text-[0.85rem] font-bold tracking-[0.08em] text-bone">
+            {edicion?.tipo === 'mentoria' ? edicion.nombre : libro.titulo}
+          </p>
           {valor ? (
             <p className="font-mono text-sm text-neon tabular-nums">{valor}</p>
           ) : (

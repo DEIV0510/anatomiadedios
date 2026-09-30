@@ -144,6 +144,8 @@ export const tienda = {
 
 export type Edicion = {
   id: string
+  /** libro = producto con cantidad y checkout · mentoria = servicio que se pide por WhatsApp */
+  tipo: 'libro' | 'mentoria'
   nombre: string
   descripcion: string
   /** PENDIENTE: «Tapa dura», «Tapa blanda», «Digital (PDF)»… */
@@ -154,26 +156,63 @@ export type Edicion = {
   precioAntes: number | null
   /** Lo que trae además del libro (vacío = no se muestra) */
   incluye: string[]
-  imagen: 'mockup' | 'portada'
+  /** Ficha corta (etiqueta: valor) */
+  ficha: { etiqueta: string; valor: string }[]
+  imagen: 'mockup' | 'portada' | 'mentoria'
   /** Link de pago propio de esta edición. Admite {cantidad} y {edicion}. */
   checkoutUrl: string | null
+  /**
+   * WhatsApp propio (mentoría): el botón abre el chat con este mensaje ya escrito.
+   * numero: con indicativo, solo dígitos (ej. '573001234567'). Si es null se usa
+   * checkout.whatsapp o contacto.whatsapp. {precio} se reemplaza si hay precio.
+   */
+  whatsapp: { numero: string | null; mensaje: string } | null
 }
 
 /**
- * [portada] En los materiales hay UN producto: el libro. Para vender más ediciones o combos
- * (digital, física, pack…) copia el objeto y cambia id, nombre, formato y precio.
+ * [portada] El libro (único producto de los materiales) y [cliente] la mentoría personalizada:
+ * acompañamiento del autor con dos transmisiones entre el autor y el lector, por WhatsApp.
+ * Para más ediciones o combos copia un objeto y cambia id, nombre, formato y precio.
  */
 export const ediciones: Edicion[] = [
   {
     id: 'libro',
+    tipo: 'libro',
     nombre: 'ANATOMÍA DE DIOS',
     descripcion: 'El libro de Elkin Ferney Gomez Medina.',
     formato: null,
     precio: null,
     precioAntes: null,
     incluye: [],
+    ficha: [],
     imagen: 'mockup',
     checkoutUrl: null,
+    whatsapp: null,
+  },
+  {
+    id: 'mentoria',
+    tipo: 'mentoria',
+    nombre: 'MENTORÍA PERSONALIZADA',
+    descripcion: 'Acompañamiento personalizado por parte del autor, Elkin Ferney Gomez Medina.',
+    formato: null,
+    /** PENDIENTE: valor de la mentoría (opcional: si queda en null se acuerda por WhatsApp) */
+    precio: null,
+    precioAntes: null,
+    incluye: [],
+    ficha: [
+      { etiqueta: 'Modalidad', valor: 'Acompañamiento personalizado' },
+      { etiqueta: 'Transmisiones', valor: '2' },
+      { etiqueta: 'Entre', valor: 'El autor y el lector' },
+      { etiqueta: 'Se solicita', valor: 'Por WhatsApp' },
+    ],
+    imagen: 'mentoria',
+    checkoutUrl: null,
+    whatsapp: {
+      /** PENDIENTE: número de WhatsApp que recibe las solicitudes de mentoría */
+      numero: null,
+      mensaje:
+        'Hola, Elkin. Quiero adquirir la *Mentoría personalizada* de ANATOMÍA DE DIOS: el acompañamiento personalizado con dos transmisiones entre el autor y yo.{precio} ¿Cuáles son los siguientes pasos?',
+    },
   },
 ]
 

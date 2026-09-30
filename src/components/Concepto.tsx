@@ -24,8 +24,16 @@ const MEDIO_CUERPO =
 
 export function Concepto() {
   const [activo, setActivo] = useState<Id>('conciencia')
+  // Los pulsos (animaciones infinitas) solo existen mientras la sección se ve
+  const [enVista, setEnVista] = useState(false)
   const tocado = useRef(false)
   const raiz = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const io = new IntersectionObserver(([en]) => setEnVista(en.isIntersecting))
+    if (raiz.current) io.observe(raiz.current)
+    return () => io.disconnect()
+  }, [])
 
   // Recorre los nodos solo mientras la sección está a la vista y nadie ha interactuado
   useEffect(() => {
@@ -108,7 +116,23 @@ export function Concepto() {
             <span className="hidden [@media(hover:hover)]:inline">Pasa el cursor por cada nodo</span>
           </p>
           <div className="relative mx-auto aspect-[600/660] w-full max-w-[36rem]" data-reveal="scale" data-activo={activo}>
+            {/* Órbita en HTML (círculo de Vitrubio, cx 300 cy 352 r 256): gira en la GPU */}
+            <span
+              aria-hidden
+              className={`pointer-events-none absolute rounded-full border border-dashed transition-colors duration-500 motion-safe:animate-[spin-slow_90s_linear_infinite] ${activo === 'universo' ? 'border-neon/70' : 'border-line-2'}`}
+              style={{ left: `${(44 / 600) * 100}%`, top: `${(96 / 660) * 100}%`, width: `${(512 / 600) * 100}%`, height: `${(512 / 660) * 100}%` }}
+            />
             <Figura activo={activo} />
+            {/* Pulso del ancla activa (HTML: escala y opacidad en la GPU) */}
+            <span
+              aria-hidden
+              className="pointer-events-none absolute size-3 -translate-x-1/2 -translate-y-1/2"
+              style={{ left: `${(MAPA[activo].ancla[0] / 600) * 100}%`, top: `${(MAPA[activo].ancla[1] / 660) * 100}%` }}
+            >
+              {enVista && (
+                <span key={activo} className="absolute inset-0 rounded-full border border-neon motion-safe:animate-[pulse-ring_1.6s_ease-out_infinite]" />
+              )}
+            </span>
             {ORDEN.map((id) => {
               const dim = dimensiones.find((x) => x.id === id)!
               const { nodo, lado } = MAPA[id]
@@ -131,7 +155,9 @@ export function Concepto() {
                     className={`relative grid size-5 shrink-0 place-items-center rounded-full border transition-all duration-300 ${on ? 'border-neon bg-neon/15 shadow-[0_0_16px_var(--color-neon)]' : 'border-mist/50 bg-void group-hover:border-neon'}`}
                   >
                     <span className={`size-1.5 rounded-full transition-colors ${on ? 'bg-neon' : 'bg-mist group-hover:bg-neon'}`} />
-                    {on && <span className="absolute inset-0 animate-[pulse-ring_1.8s_ease-out_infinite] rounded-full border border-neon" />}
+                    {on && enVista && (
+                      <span className="absolute inset-0 rounded-full border border-neon motion-safe:animate-[pulse-ring_1.8s_ease-out_infinite]" />
+                    )}
                   </span>
                   <span
                     className={`bg-void/70 px-1.5 font-mono text-[0.62rem] tracking-[0.2em] whitespace-nowrap uppercase transition-colors duration-300 sm:text-[0.7rem] ${on ? 'text-neon' : 'text-mist group-hover:text-bone'}`}
@@ -177,15 +203,6 @@ function Figura({ activo }: { activo: Id }) {
 
       {/* Geometría: círculo y cuadrado de Vitrubio, marcas de grados */}
       <g fill="none" stroke="#1d3a2b">
-        <circle
-          cx="300"
-          cy="352"
-          r="256"
-          strokeDasharray="2 7"
-          className="origin-[300px_352px] animate-[spin-slow_90s_linear_infinite] transition-[stroke] duration-500"
-          stroke={on('universo') ? '#39ff88' : '#1d3a2b'}
-          strokeOpacity={on('universo') ? 0.7 : 1}
-        />
         <circle cx="300" cy="352" r="196" strokeOpacity="0.7" />
         <rect x="44" y="96" width="512" height="512" strokeOpacity="0.55" />
         <path d="M300 88v20M300 596v20M36 352h20M544 352h20" stroke="#39ff88" strokeOpacity="0.4" />
@@ -236,9 +253,6 @@ function Figura({ activo }: { activo: Id }) {
               style={activa ? { filter: 'drop-shadow(0 0 4px #39ff88)' } : undefined}
             />
             <circle cx={ancla[0]} cy={ancla[1]} r={activa ? 5 : 3.2} fill={activa ? neon : '#a8b5ad'} className="transition-all duration-300" />
-            {activa && (
-              <circle cx={ancla[0]} cy={ancla[1]} r="5" fill="none" stroke={neon} className="origin-center [transform-box:fill-box] animate-[pulse-ring_1.6s_ease-out_infinite]" />
-            )}
           </g>
         )
       })}

@@ -61,8 +61,9 @@ const BOOT = `(function(){try{var d=document.documentElement;d.classList.add('js
 const LT = String.fromCharCode(92) + 'u003c'
 
 function jsonLd() {
+  // Solo las ediciones del libro son ofertas del Book (la mentoría es un servicio aparte)
   const ofertas = ediciones
-    .filter((e) => e.precio != null)
+    .filter((e) => e.tipo === 'libro' && e.precio != null)
     .map((e) => ({
       '@type': 'Offer',
       name: e.formato ? `${e.nombre} — ${e.formato}` : e.nombre,

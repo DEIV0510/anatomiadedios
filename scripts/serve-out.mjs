@@ -26,6 +26,7 @@ const TYPES = {
   '.webmanifest': 'application/manifest+json',
 }
 const COMPRESSIBLE = new Set(['.html', '.js', '.css', '.json', '.txt', '.xml', '.svg', '.webmanifest'])
+const CACHE = new Map()
 
 function resolve(urlPath) {
   const clean = decodeURIComponent(urlPath.split('?')[0]).replace(/\.\.+/g, '')
@@ -73,12 +74,14 @@ http
 
     let body = fs.readFileSync(file)
     const accept = String(req.headers['accept-encoding'] || '')
-    if (COMPRESSIBLE.has(ext) && accept.includes('br')) {
-      body = zlib.brotliCompressSync(body)
-      headers['Content-Encoding'] = 'br'
-    } else if (COMPRESSIBLE.has(ext) && accept.includes('gzip')) {
-      body = zlib.gzipSync(body)
-      headers['Content-Encoding'] = 'gzip'
+    // Comprimido una sola vez por archivo y versión (como un hosting real con caché):
+    // recomprimir en cada petición con brotli 11 sumaba ~1 s al tiempo de respuesta
+    const enc = COMPRESSIBLE.has(ext) ? (accept.includes('br') ? 'br' : accept.includes('gzip') ? 'gzip' : null) : null
+    if (enc) {
+      const clave = `${file}|${fs.statSync(file).mtimeMs}|${enc}`
+      if (!CACHE.has(clave)) CACHE.set(clave, enc === 'br' ? zlib.brotliCompressSync(body) : zlib.gzipSync(body))
+      body = CACHE.get(clave)
+      headers['Content-Encoding'] = enc
     }
     headers['Content-Length'] = body.length
     res.writeHead(status, headers)

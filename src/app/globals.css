@@ -63,6 +63,9 @@
     scrollbar-color: var(--color-line-2) var(--color-void);
     -webkit-text-size-adjust: 100%;
     overflow-x: clip;
+    /* Sin anclaje de scroll: las entradas animan con transform el nodo que Chrome elige de
+       ancla y, tras un salto (menú o enlace), la página «compensaba» subiendo ~100 px */
+    overflow-anchor: none;
   }
   html:has(dialog[open]) {
     overflow: hidden;
@@ -202,24 +205,39 @@
       font-size: 0.95rem;
     }
   }
+  /* Luz que recorre el borde: un degradado cónico gira detrás de una máscara con forma de
+     anillo (el borde). Siempre está a la vista, así que Chrome lo compone en la GPU (unos
+     destellos que esperan fuera del recorte no se componen y cuestan un frame de CPU cada vez). */
   .btn-trace {
     position: absolute;
     inset: -1px;
-    width: calc(100% + 2px);
-    height: calc(100% + 2px);
-    overflow: visible;
+    padding: 2px;
+    overflow: hidden;
     pointer-events: none;
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0) content-box exclude,
+      linear-gradient(#000 0 0);
   }
-  .btn-trace rect {
-    fill: none;
-    stroke: var(--color-neon-2);
-    stroke-width: 2;
-    stroke-dasharray: 9 91;
-    filter: drop-shadow(0 0 4px var(--color-neon));
-    animation: trace 3.6s linear infinite;
+  .btn-trace::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 160%;
+    aspect-ratio: 1;
+    margin: -80% 0 0 -80%;
+    background: conic-gradient(from 0deg, transparent 0 76%, color-mix(in oklab, var(--color-neon) 70%, transparent) 87%, #eafff3 94%, transparent 97%);
+    animation: trace-giro 4.2s linear infinite;
   }
-  .btn-neon:hover .btn-trace rect {
-    stroke: #fff;
+  .btn-neon:hover .btn-trace::before {
+    background: conic-gradient(from 0deg, transparent 0 80%, rgb(255 255 255 / 0.6) 88%, #fff 93%, transparent 96%);
+  }
+  .btn-neon > :not(.btn-trace) {
+    position: relative;
   }
 
   /* Botón secundario */
@@ -471,8 +489,12 @@
     border-radius: 50%;
     background: var(--color-neon-2);
     box-shadow: 0 0 8px var(--color-neon);
-    opacity: 0;
-    animation: float-up var(--t, 14s) linear var(--d, 0s) infinite;
+    opacity: 0.02;
+    /* Retraso negativo: cada partícula arranca ya a mitad de su recorrido (nunca invisible) */
+    animation: float-up var(--t, 14s) linear calc(var(--d, 0s) * -1) infinite;
+  }
+  .particle--izq {
+    animation-name: float-up-izq;
   }
   @media (prefers-reduced-motion: reduce) {
     .particle {
@@ -790,6 +812,8 @@
     height: 6px;
     margin: -3px 0 0 -3px;
     background: var(--color-bone);
+    /* Borde oscuro: el punto se sigue viendo sobre zonas claras (páginas del libro, portada) */
+    box-shadow: 0 0 0 1.5px rgb(2 4 3 / 0.7);
   }
   .cursor__ring {
     width: 34px;
@@ -834,9 +858,9 @@
 /* =============================================================================================
    Keyframes
    ============================================================================================= */
-@keyframes trace {
+@keyframes trace-giro {
   to {
-    stroke-dashoffset: -100;
+    transform: rotate(360deg);
   }
 }
 @keyframes blink {
@@ -888,20 +912,33 @@
     transform: none;
   }
 }
+/* Sin var() en los fotogramas y sin llegar a opacidad 0: así Chrome puede componerlas */
 @keyframes float-up {
   0% {
-    opacity: 0;
+    opacity: 0.02;
     transform: translate3d(0, 0, 0);
   }
-  12% {
-    opacity: var(--o, 0.7);
-  }
+  12%,
   80% {
-    opacity: var(--o, 0.7);
+    opacity: 0.6;
   }
   100% {
-    opacity: 0;
-    transform: translate3d(var(--x, 12px), -46vh, 0);
+    opacity: 0.02;
+    transform: translate3d(14px, -46vh, 0);
+  }
+}
+@keyframes float-up-izq {
+  0% {
+    opacity: 0.02;
+    transform: translate3d(0, 0, 0);
+  }
+  12%,
+  80% {
+    opacity: 0.45;
+  }
+  100% {
+    opacity: 0.02;
+    transform: translate3d(-12px, -46vh, 0);
   }
 }
 @keyframes float {
@@ -980,7 +1017,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .btn-trace rect,
+  .btn-trace::before,
   .caret::after {
     animation: none;
   }
@@ -1060,3 +1097,82 @@
     opacity: 0 !important;
   }
 }
+
+/* =============================================================================================
+   Mentoría: dos pulsos que viajan entre autor y lector (solo transform/opacity: GPU)
+   ============================================================================================= */
+@layer components {
+  .mentoria-linea {
+    background: linear-gradient(90deg, color-mix(in oklab, var(--color-neon) 70%, transparent), color-mix(in oklab, var(--color-neon) 22%, transparent) 50%, color-mix(in oklab, var(--color-neon) 70%, transparent));
+  }
+  /* El envoltorio mide lo mismo que la línea: trasladarlo 100 % lleva el punto de punta a punta */
+  .mentoria-pulso {
+    position: absolute;
+    /* Con alto real (no 0): si el elemento animado no pinta nada, Chrome no lo compone */
+    top: -3px;
+    left: 0;
+    width: 100%;
+    height: 7px;
+    animation: mentoria-ida 3.2s var(--ease-in-out) infinite;
+  }
+  .mentoria-pulso > span {
+    position: absolute;
+    top: 0;
+    left: -3px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-neon-2);
+    box-shadow:
+      0 0 10px var(--color-neon),
+      0 0 22px var(--color-neon);
+  }
+  .mentoria-pulso--vuelta {
+    animation-name: mentoria-vuelta;
+    animation-delay: 1.6s;
+  }
+  .mentoria-anillo {
+    animation: spin-slow 24s linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mentoria-pulso,
+    .mentoria-anillo {
+      animation: none;
+    }
+    .mentoria-pulso {
+      transform: translateX(33%);
+    }
+    .mentoria-pulso--vuelta {
+      transform: translateX(66%);
+    }
+  }
+}
+@keyframes mentoria-ida {
+  0% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  12%,
+  88% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+@keyframes mentoria-vuelta {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  12%,
+  88% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+}
+

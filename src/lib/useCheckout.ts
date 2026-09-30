@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import type { Edicion } from '@/data/libro'
-import { destinoCheckout } from '@/lib/checkout'
+import { destinoCheckout, type MotivoError } from '@/lib/checkout'
 
 export type EstadoCheckout = 'listo' | 'cargando' | 'error' | 'whatsapp'
 
@@ -13,6 +13,7 @@ export type EstadoCheckout = 'listo' | 'cargando' | 'error' | 'whatsapp'
  */
 export function useCheckout() {
   const [estado, setEstado] = useState<EstadoCheckout>('listo')
+  const [motivo, setMotivo] = useState<MotivoError>('sin-configurar')
 
   // Al volver con «atrás» desde el checkout (bfcache) el botón no se queda cargando
   useEffect(() => {
@@ -24,6 +25,7 @@ export function useCheckout() {
   const ir = useCallback((edicion: Edicion, cantidad: number) => {
     const destino = destinoCheckout(edicion, cantidad)
     if (!destino.ok) {
+      setMotivo(destino.motivo)
       setEstado('error')
       return
     }
@@ -43,5 +45,5 @@ export function useCheckout() {
   }, [])
 
   const reiniciar = useCallback(() => setEstado('listo'), [])
-  return { estado, ir, reiniciar }
+  return { estado, motivo, ir, reiniciar }
 }

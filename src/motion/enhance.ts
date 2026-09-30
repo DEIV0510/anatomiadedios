@@ -10,31 +10,94 @@ import { SplitText } from 'gsap/SplitText'
 let iniciado = false
 const q = <T extends Element = HTMLElement>(sel: string, root: ParentNode = document) => Array.from(root.querySelectorAll<T>(sel))
 
-export function iniciar() {
+/** Devuelve el hilo principal entre pasos: el arranque no forma una sola tarea larga
+ *  (en un móvil lento, todo junto eran ~350 ms seguidos sin responder a toques) */
+const ceder = () =>
+  new Promise<void>((r) => {
+    const s = (globalThis as { scheduler?: { yield?: () => Promise<void> } }).scheduler
+    if (s?.yield) s.yield().then(r)
+    else setTimeout(r, 0)
+  })
+
+export async function iniciar() {
   if (iniciado) return
   iniciado = true
-  gsap.registerPlugin(ScrollTrigger, SplitText)
+  // ScrollTrigger arranca al registrarse un bucle requestAnimationFrame perpetuo (_rafBugFix,
+  // un parche antiguo para Firefox). Con él vivo, Chrome despierta el hilo principal en cada
+  // frame y recalcula las animaciones CSS: ~50 % de CPU con la página quieta (95 % en un
+  // móvil lento). Se registra con un rAF que no programa nada durante esa llamada síncrona,
+  // así el bucle nunca empieza; ScrollTrigger sigue funcionando con los eventos de scroll.
+  const raf = window.requestAnimationFrame
+  window.requestAnimationFrame = () => 0
+  try {
+    gsap.registerPlugin(ScrollTrigger, SplitText)
+  } finally {
+    window.requestAnimationFrame = raf
+  }
 
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
   lluviaDeCodigo(reduce)
   bloquesActivos()
   cursor()
-  if (reduce) return
-
-  glitchOcasional()
-  inclinacionLibro()
-
-  const mm = gsap.matchMedia()
-  mm.add('(prefers-reduced-motion: no-preference)', () => {
+  await ceder()
+  if (!reduce) {
+    glitchOcasional()
+    inclinacionLibro()
     heroSalida()
+    await ceder()
     despertar()
+    await ceder()
     libroScroll()
+    await ceder()
+    await document.fonts.ready
     // Revelados y títulos al final: sus posiciones ya cuentan con todo lo anterior
-    document.fonts.ready.then(() => {
-      titulos()
-      revelados()
-      ScrollTrigger.refresh()
-    })
+    titulos()
+    await ceder()
+    revelados()
+    await ceder()
+    ScrollTrigger.refresh()
+    await ceder()
+  }
+  // Al final, con los revelados ya preparados: animaciones infinitas solo donde se ven
+  animacionesSoloEnPantalla()
+}
+
+/* ------------------------------------------------------------------------------------------ */
+/* Animaciones CSS infinitas solo donde se ven. Fuera de pantalla Chrome no las compone en la   */
+/* GPU y recalcula estilos en cada frame; y si arrancaron invisibles (fuera de vista u opacidad */
+/* 0) se quedan en el hilo principal. Pausar y reanudar al entrar las vuelve a componer.        */
+/* ------------------------------------------------------------------------------------------ */
+// Solo las infinitas: las de entrada (hero-rise…) ya terminaron y play() las repetiría
+const infinitas = (el: Element) => el.getAnimations({ subtree: true }).filter((a) => a.effect?.getTiming().iterations === Infinity)
+
+/** Pausa + play en el frame siguiente, ya visibles: así Chrome sí las lleva a la GPU
+ *  (cambiar animation-play-state por CSS no las recompone) */
+function recomponer(el: Element) {
+  const anims = infinitas(el).filter((a) => a.playState === 'running')
+  anims.forEach((a) => a.pause())
+  requestAnimationFrame(() => anims.forEach((a) => a.play()))
+}
+
+function animacionesSoloEnPantalla() {
+  // Se vigila cada elemento animado (no la sección entera: en una sección a medio ver, lo que
+  // queda fuera de pantalla seguiría corriendo en el hilo principal)
+  const porElemento = new Map<Element, Animation[]>()
+  for (const a of document.getAnimations()) {
+    if (a.effect?.getTiming().iterations !== Infinity) continue
+    const t = (a.effect as KeyframeEffect | null)?.target
+    if (t) porElemento.set(t, [...(porElemento.get(t) ?? []), a])
+  }
+  const io = new IntersectionObserver((entries) => {
+    for (const en of entries) {
+      const anims = porElemento.get(en.target) ?? []
+      anims.forEach((a) => a.pause())
+      if (en.isIntersecting) requestAnimationFrame(() => anims.forEach((a) => a.play()))
+    }
+  })
+  porElemento.forEach((_, el) => io.observe(el))
+  // Lo que estaba dentro de una entrada CSS (opacidad 0) se recompone al terminar esa entrada
+  document.addEventListener('animationend', (e) => {
+    if (e.animationName === 'hero-rise' || e.animationName === 'hero-reveal') recomponer(e.target as Element)
   })
 }
 
@@ -50,17 +113,30 @@ function revelados() {
   ScrollTrigger.batch(els, {
     start: 'top 90%',
     once: true,
-    onEnter: (lote) =>
-      gsap.to(lote, {
-        autoAlpha: 1,
-        y: 0,
-        scale: 1,
-        duration: 0.95,
-        ease: 'power3.out',
-        stagger: 0.08,
-        overwrite: true,
-        clearProps: 'transform,visibility',
-      }),
+    onEnter: (lote) => {
+      // Tras un salto (menú, ancla, «atrás») la tanda trae también todo lo que quedó arriba:
+      // eso se muestra al instante y solo se anima lo que está en pantalla (si no, el
+      // escalonado haría esperar segundos a lo visible).
+      const pasados = lote.filter((el) => el.getBoundingClientRect().bottom <= 0)
+      const visibles = lote.filter((el) => el.getBoundingClientRect().bottom > 0)
+      if (pasados.length) {
+        gsap.set(pasados, { autoAlpha: 1, y: 0, scale: 1, clearProps: 'transform,visibility' })
+        pasados.forEach(recomponer)
+      }
+      if (visibles.length)
+        gsap.to(visibles, {
+          autoAlpha: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.95,
+          ease: 'power3.out',
+          stagger: 0.08,
+          overwrite: true,
+          clearProps: 'transform,visibility',
+          // Ya visibles: sus animaciones infinitas (luz del borde, pulsos) pasan a la GPU
+          onComplete: () => visibles.forEach(recomponer),
+        })
+    },
   })
 }
 
@@ -78,10 +154,11 @@ function titulos() {
           ease: 'expo.out',
           stagger: 0.045,
           scrollTrigger: { trigger: el, start: 'top 86%', once: true },
-          // Al terminar se deshace el corte: sin máscaras que recorten el brillo de .hl
+          // Al terminar, las máscaras dejan de recortar (el brillo de .hl se ve completo).
+          // No se deshace el corte: revert() cambiaba unos px la altura y movía la página.
           onComplete: () => {
             self.kill()
-            self.revert()
+            gsap.set(self.masks, { overflow: 'visible' })
           },
         })
       },
@@ -252,7 +329,17 @@ function cursor() {
   let ax = x
   let ay = y
   let activo = false
+  let raf = 0
   const interactivo = 'a, button, summary, label, [role="button"], [role="radio"], input, select, textarea'
+
+  // El anillo persigue al punto con un bucle propio que se detiene al alcanzarlo (un bucle
+  // permanente, como un oyente fijo del ticker de GSAP, obliga a recalcular estilos en cada frame)
+  const seguir = () => {
+    ax += (x - ax) * 0.2
+    ay += (y - ay) * 0.2
+    anillo.style.transform = `translate3d(${ax.toFixed(1)}px, ${ay.toFixed(1)}px, 0)`
+    raf = Math.abs(x - ax) + Math.abs(y - ay) > 0.3 ? requestAnimationFrame(seguir) : 0
+  }
 
   window.addEventListener(
     'pointermove',
@@ -267,6 +354,7 @@ function cursor() {
         ay = y
         html.classList.add('has-cursor')
       }
+      if (!raf) raf = requestAnimationFrame(seguir)
     },
     { passive: true },
   )
@@ -279,12 +367,6 @@ function cursor() {
   document.documentElement.addEventListener('pointerleave', () => {
     activo = false
     html.classList.remove('has-cursor')
-  })
-  gsap.ticker.add(() => {
-    if (!activo) return
-    ax += (x - ax) * 0.2
-    ay += (y - ay) * 0.2
-    anillo.style.transform = `translate3d(${ax.toFixed(1)}px, ${ay.toFixed(1)}px, 0)`
   })
 }
 
@@ -307,18 +389,20 @@ function lluvia(canvas: HTMLCanvasElement, fuente: string, reduce: boolean) {
   const movil = matchMedia('(max-width: 767px)').matches
   const size = movil ? 13 : 14
   const paso = movil ? 17 : 19
-  const fps = movil ? 12 : 18
+  // Lenta a propósito: pocos fotogramas bastan (cada uno despierta el hilo principal)
+  const fps = movil ? 8 : 12
+  const vel = 18 / fps // misma velocidad en px/s que a 18 fps
   let w = 0
   let h = 0
   let cols: { y: number; v: number; espera: number }[] = []
   let visible = false
   let raf = 0
-  let ultimo = 0
+  let espera: number | undefined
 
   const glifo = () => GLIFOS[(Math.random() * GLIFOS.length) | 0]
 
   const medir = () => {
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5)
+    const dpr = 1 // fondo tenue: a 1x basta y el lienzo pesa hasta 9 veces menos en un teléfono 3x
     w = canvas.clientWidth
     h = canvas.clientHeight
     canvas.width = Math.max(1, Math.round(w * dpr))
@@ -329,7 +413,7 @@ function lluvia(canvas: HTMLCanvasElement, fuente: string, reduce: boolean) {
     const n = Math.ceil(w / paso)
     cols = Array.from({ length: n }, () => ({
       y: Math.random() * (h / size),
-      v: 0.12 + Math.random() * 0.22,
+      v: (0.12 + Math.random() * 0.22) * vel,
       espera: Math.random() < 0.45 ? Math.random() * 120 : 0,
     }))
     if (reduce) estatico()
@@ -348,10 +432,16 @@ function lluvia(canvas: HTMLCanvasElement, fuente: string, reduce: boolean) {
     }
   }
 
-  const frame = (t: number) => {
-    raf = requestAnimationFrame(frame)
-    if (t - ultimo < 1000 / fps) return
-    ultimo = t
+  // El siguiente fotograma se pide recién cuando toca (12-18 por segundo): pedir uno en cada
+  // frame del navegador, aunque no se dibuje, mantiene el hilo principal despierto
+  const programar = () => {
+    espera = window.setTimeout(() => {
+      raf = requestAnimationFrame(frame)
+    }, 1000 / fps)
+  }
+  const frame = () => {
+    raf = 0
+    programar()
     // Estela: se borra un poco lo pintado (el lienzo sigue transparente sobre el video)
     ctx.globalCompositeOperation = 'destination-out'
     ctx.fillStyle = 'rgba(0,0,0,0.11)'
@@ -369,19 +459,21 @@ function lluvia(canvas: HTMLCanvasElement, fuente: string, reduce: boolean) {
       c.y += c.v
       if (y > h + size * 4) {
         c.y = -Math.random() * 12
-        c.v = 0.12 + Math.random() * 0.22
+        c.v = (0.12 + Math.random() * 0.22) * vel
         c.espera = Math.random() * 90
       }
     }
   }
 
   const arrancar = () => {
-    if (reduce || !visible || document.hidden || raf) return
+    if (reduce || !visible || document.hidden || raf || espera) return
     raf = requestAnimationFrame(frame)
   }
   const parar = () => {
     cancelAnimationFrame(raf)
+    window.clearTimeout(espera)
     raf = 0
+    espera = undefined
   }
 
   medir()

@@ -1,4 +1,5 @@
-import { confianza, libro, narrativa } from '@/data/libro'
+import { ArrowRight } from 'lucide-react'
+import { confianza, ediciones, libro, narrativa } from '@/data/libro'
 import { anclas } from '@/lib/site'
 import { BotonComprar } from './ui/BotonComprar'
 import { Conejo } from './ui/Marca'
@@ -7,6 +8,7 @@ import { Pendiente } from './ui/Pendiente'
 /** Cierre: fondo negro, código que cae despacio, el conejo blanco y el CTA más grande */
 export function CtaFinal() {
   const t = narrativa.final
+  const mentoria = ediciones.find((e) => e.tipo === 'mentoria')
   return (
     <section id={anclas.despierta} aria-labelledby="despierta-titulo" className="relative isolate overflow-hidden bg-void py-28 md:py-44">
       <canvas data-rain="final" aria-hidden className="code-rain -z-10 opacity-70 [mask-image:radial-gradient(ellipse_at_center,#000_15%,transparent_78%)]" />
@@ -41,6 +43,24 @@ export function CtaFinal() {
         <div className="mt-6" data-reveal>
           {confianza.compra ? <p className="hud text-mist">{confianza.compra}</p> : <Pendiente dato="texto de confianza" />}
         </div>
+
+        {/* Acceso secundario a la mentoría: abre la compra rápida con ella elegida */}
+        {mentoria && (
+          <a
+            href={`#${anclas.ediciones}`}
+            data-comprar={mentoria.id}
+            className="group mt-10 inline-flex min-h-11 flex-wrap items-center justify-center gap-x-3 gap-y-1 border-t border-line pt-8 font-mono text-[0.72rem] tracking-[0.18em] text-mist uppercase transition-colors hover:text-neon"
+            data-reveal
+          >
+            <span>
+              <span className="text-neon">&gt;</span> ¿Quieres el acompañamiento del autor?
+            </span>
+            <span className="flex items-center gap-2 text-bone underline decoration-neon/60 underline-offset-[6px] group-hover:text-neon">
+              Mentoría personalizada
+              <ArrowRight aria-hidden className="size-4 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={1.75} />
+            </span>
+          </a>
+        )}
       </div>
     </section>
   )

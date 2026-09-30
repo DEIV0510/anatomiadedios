@@ -2,7 +2,8 @@
 
 import { useEffect, useRef } from 'react'
 import { Check, X } from 'lucide-react'
-import { checkout, confianza, ediciones, libro } from '@/data/libro'
+import { confianza, ediciones, libro } from '@/data/libro'
+import { vaPorWhatsApp } from '@/lib/checkout'
 import { precio } from '@/lib/format'
 import { media } from '@/lib/media'
 import { pedido, usePedido } from '@/lib/pedido'
@@ -21,7 +22,7 @@ import { Picture } from './ui/Picture'
 export function CompraRapida() {
   const { abierto, edicion, cantidad } = usePedido()
   const dialogo = useRef<HTMLDialogElement>(null)
-  const { estado, ir, reiniciar } = useCheckout()
+  const { estado, motivo, ir, reiniciar } = useCheckout()
 
   // Delegación: todos los CTA «COMPRAR» abren el panel
   useEffect(() => {
@@ -55,8 +56,10 @@ export function CompraRapida() {
     return () => d.removeEventListener('close', onClose)
   }, [])
 
+  const esMentoria = edicion?.tipo === 'mentoria'
   const unitario = precio(edicion?.precio)
-  const total = edicion?.precio != null ? precio(edicion.precio * cantidad) : null
+  const total = edicion?.precio != null ? precio(edicion.precio * (esMentoria ? 1 : cantidad)) : null
+  const porWhatsApp = edicion ? vaPorWhatsApp(edicion) : false
 
   return (
     <dialog
@@ -90,11 +93,17 @@ export function CompraRapida() {
             </div>
             <div className="min-w-0">
               <h2 id="compra-titulo" className="font-display text-2xl leading-tight font-bold text-bone">
-                {libro.titulo}
+                {esMentoria ? edicion?.nombre : libro.titulo}
               </h2>
-              <p className="hud mt-2">{libro.autor}</p>
+              <p className="hud mt-2">{esMentoria ? `${libro.titulo} · ${libro.autor}` : libro.autor}</p>
               <div className="mt-3">
-                {edicion?.formato ? <p className="text-sm text-mist">{edicion.formato}</p> : <Pendiente dato="formato" />}
+                {esMentoria ? (
+                  <p className="text-sm text-mist">Dos transmisiones entre el autor y el lector</p>
+                ) : edicion?.formato ? (
+                  <p className="text-sm text-mist">{edicion.formato}</p>
+                ) : (
+                  <Pendiente dato="formato" />
+                )}
               </div>
             </div>
           </div>
@@ -102,7 +111,7 @@ export function CompraRapida() {
           {/* Ediciones (solo si hay varias) */}
           {ediciones.length > 1 && (
             <fieldset>
-              <legend className="hud mb-3">Edición</legend>
+              <legend className="hud mb-3">Experiencia</legend>
               <div className="grid gap-2">
                 {ediciones.map((e) => {
                   const on = e.id === edicion?.id
@@ -121,7 +130,7 @@ export function CompraRapida() {
                           {e.formato && <span className="text-mist"> · {e.formato}</span>}
                         </span>
                       </span>
-                      <span className="font-mono text-sm text-bone tabular-nums">{precio(e.precio) ?? '—'}</span>
+                      {precio(e.precio) && <span className="font-mono text-sm text-bone tabular-nums">{precio(e.precio)}</span>}
                     </label>
                   )
                 })}
@@ -129,36 +138,42 @@ export function CompraRapida() {
             </fieldset>
           )}
 
-          {/* Cantidad y total */}
-          <div className="flex items-end justify-between gap-4 border-y border-line py-5">
-            <div>
-              <p className="hud mb-2">Cantidad</p>
-              <Cantidad valor={cantidad} onChange={(n) => pedido.cantidad(n)} />
+          {/* Cantidad y total (la mentoría es una sola; sin precio no se muestra el rótulo) */}
+          {(!esMentoria || total || IS_DEV) && (
+            <div className="flex items-end justify-between gap-4 border-y border-line py-5">
+              {!esMentoria && (
+                <div>
+                  <p className="hud mb-2">Cantidad</p>
+                  <Cantidad valor={cantidad} onChange={(n) => pedido.cantidad(n)} />
+                </div>
+              )}
+              {/* Sin precio configurado no se muestra el rótulo vacío (en desarrollo, el aviso) */}
+              {(total || IS_DEV) && (
+                <div className={esMentoria ? '' : 'text-right'}>
+                  <p className="hud mb-2">{!esMentoria && cantidad > 1 ? 'Total' : 'Precio'}</p>
+                  {total ? (
+                    <p className="font-display text-3xl font-bold text-bone tabular-nums">{total}</p>
+                  ) : (
+                    <Pendiente dato={esMentoria ? 'valor de la mentoría' : 'precio'} />
+                  )}
+                  {!esMentoria && unitario && cantidad > 1 && <p className="mt-1 font-mono text-xs text-dim">{unitario} c/u</p>}
+                </div>
+              )}
             </div>
-            {/* Sin precio configurado no se muestra el rótulo vacío (en desarrollo, el aviso) */}
-            {(total || IS_DEV) && (
-              <div className="text-right">
-                <p className="hud mb-2">{cantidad > 1 ? 'Total' : 'Precio'}</p>
-                {total ? (
-                  <p className="font-display text-3xl font-bold text-bone tabular-nums">{total}</p>
-                ) : (
-                  <Pendiente dato="precio" />
-                )}
-                {unitario && cantidad > 1 && <p className="mt-1 font-mono text-xs text-dim">{unitario} c/u</p>}
-              </div>
-            )}
-          </div>
+          )}
 
           <div className="mt-auto">
-            <BotonCheckout estado={estado} onClick={() => edicion && ir(edicion, cantidad)}>
-              Ir al checkout
+            <BotonCheckout estado={estado} motivo={motivo} whatsapp={porWhatsApp} onClick={() => edicion && ir(edicion, esMentoria ? 1 : cantidad)}>
+              {esMentoria ? 'Comprar por WhatsApp' : 'Ir al checkout'}
             </BotonCheckout>
             <p className="mt-4 text-center font-mono text-[0.66rem] tracking-[0.16em] text-dim uppercase">
-              {checkout.whatsapp && !checkout.url && !edicion?.checkoutUrl ? 'Tu pedido llega armado por WhatsApp' : 'Te llevamos directo al pago'}
+              {esMentoria ? 'Se abre WhatsApp con tu mensaje listo' : porWhatsApp ? 'Tu pedido llega armado por WhatsApp' : 'Te llevamos directo al pago'}
             </p>
-            <div className="mt-3 flex justify-center">
-              {confianza.compra ? <p className="hud text-center text-mist">{confianza.compra}</p> : <Pendiente dato="texto de confianza" />}
-            </div>
+            {!esMentoria && (
+              <div className="mt-3 flex justify-center">
+                {confianza.compra ? <p className="hud text-center text-mist">{confianza.compra}</p> : <Pendiente dato="texto de confianza" />}
+              </div>
+            )}
           </div>
         </div>
       </div>
