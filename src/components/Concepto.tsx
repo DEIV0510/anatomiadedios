@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 import { dimensiones, type Dimension } from '@/data/libro'
 import { BotonComprar } from './ui/BotonComprar'
 import { Rotulo } from './ui/Resaltado'
+import { numeroSeccion } from '@/lib/navegacion'
+import { anclas } from '@/lib/site'
 
 type Id = Dimension['id']
 
@@ -62,13 +64,13 @@ export function Concepto() {
   const indice = ORDEN.indexOf(activo) + 1
 
   return (
-    <section ref={raiz} id="concepto" aria-labelledby="concepto-titulo" className="relative overflow-hidden py-24 md:py-36">
+    <section ref={raiz} id={anclas.concepto} aria-labelledby="concepto-titulo" className="relative overflow-hidden py-24 md:py-36">
       <div aria-hidden className="grid-bg pointer-events-none absolute inset-0 opacity-50 [mask-image:radial-gradient(ellipse_at_60%_50%,#000_20%,transparent_70%)]" />
 
       <div className="wrap relative grid items-center gap-12 lg:grid-cols-12 lg:gap-x-8 lg:gap-y-10" data-orden="ok">
         {/* Cabecera */}
         <div className="lg:col-span-5 lg:row-start-1 lg:self-end">
-          <Rotulo n="02">Concepto</Rotulo>
+          <Rotulo n={numeroSeccion(anclas.concepto)}>Concepto</Rotulo>
           <h2 id="concepto-titulo" className="title-section mt-6" data-split>
             ¿Qué hay <span className="hl">detrás</span> de la realidad?
           </h2>

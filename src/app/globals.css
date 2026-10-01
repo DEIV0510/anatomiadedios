@@ -1134,10 +1134,32 @@
   .mentoria-anillo {
     animation: spin-slow 24s linear infinite;
   }
+  /* Foto del autor: un barrido de escáner la recorre (solo transform: GPU). El elemento mide el
+     doble del cuadro y siempre lo cubre: nunca queda entero fuera del recorte, porque lo que
+     arranca sin pintar nada a la vista Chrome no lo compone */
+  .mentoria-barrido {
+    position: absolute;
+    inset-inline: 0;
+    top: -100%;
+    height: 200%;
+    pointer-events: none;
+    /* Estela corta y tenue: una línea que pasa, no una franja que tiña la foto */
+    background: linear-gradient(
+      180deg,
+      transparent 0 45%,
+      color-mix(in oklab, var(--color-neon) 3%, transparent) 48.6%,
+      color-mix(in oklab, var(--color-neon) 26%, transparent) 49.85%,
+      transparent 50%
+    );
+    animation: mentoria-barrido 6.5s linear infinite;
+  }
   @media (prefers-reduced-motion: reduce) {
     .mentoria-pulso,
     .mentoria-anillo {
       animation: none;
+    }
+    .mentoria-barrido {
+      display: none;
     }
     .mentoria-pulso {
       transform: translateX(33%);
@@ -1159,6 +1181,11 @@
   100% {
     transform: translateX(100%);
     opacity: 0;
+  }
+}
+@keyframes mentoria-barrido {
+  to {
+    transform: translateY(50%);
   }
 }
 @keyframes mentoria-vuelta {

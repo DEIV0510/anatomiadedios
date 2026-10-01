@@ -4,6 +4,7 @@ import { anclas, IS_DEV } from '@/lib/site'
 import { BotonComprar } from './ui/BotonComprar'
 import { Pendiente } from './ui/Pendiente'
 import { Rotulo } from './ui/Resaltado'
+import { numeroSeccion } from '@/lib/navegacion'
 
 /** Acordeón nativo (<details>): accesible y sin JS. Solo preguntas con respuesta real. */
 export function Faq() {
@@ -12,7 +13,7 @@ export function Faq() {
     <section id={anclas.faq} aria-labelledby="faq-titulo" className="relative py-24 md:py-36">
       <div className="wrap grid gap-12 lg:grid-cols-12">
         <div className="lg:col-span-5">
-          <Rotulo n="08">FAQ</Rotulo>
+          <Rotulo n={numeroSeccion(anclas.faq)}>FAQ</Rotulo>
           <h2 id="faq-titulo" className="title-section mt-6" data-split>
             Preguntas <span className="hl">frecuentes</span>
           </h2>

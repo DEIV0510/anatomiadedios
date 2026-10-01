@@ -9,6 +9,7 @@ import { media } from '@/lib/media'
 import { pedido, usePedido } from '@/lib/pedido'
 import { IS_DEV } from '@/lib/site'
 import { useCheckout } from '@/lib/useCheckout'
+import { AvatarAutor } from './ui/AvatarAutor'
 import { BotonCheckout } from './ui/BotonCheckout'
 import { Cantidad } from './ui/Cantidad'
 import { Pendiente } from './ui/Pendiente'
@@ -88,8 +89,13 @@ export function CompraRapida() {
         <div className="relative flex flex-1 flex-col gap-7 p-6">
           {/* Producto */}
           <div className="flex gap-5">
-            <div className="relative w-24 shrink-0 shadow-[0_18px_40px_-12px_rgb(0_0_0/0.9),0_0_30px_-10px_rgb(57_255_136/0.35)]">
-              <Picture img={media.cover} alt="" sizes="96px" imgClassName="block h-auto w-full" />
+            <div className="relative w-24 shrink-0 self-start shadow-[0_18px_40px_-12px_rgb(0_0_0/0.9),0_0_30px_-10px_rgb(57_255_136/0.35)]">
+              {/* Mentoría: el autor con el libro; libro: la portada */}
+              {esMentoria ? (
+                <Picture img={media.autor} alt="" sizes="96px" imgClassName="block h-auto w-full border border-neon/40" />
+              ) : (
+                <Picture img={media.cover} alt="" sizes="96px" imgClassName="block h-auto w-full" />
+              )}
             </div>
             <div className="min-w-0">
               <h2 id="compra-titulo" className="font-display text-2xl leading-tight font-bold text-bone">
@@ -122,14 +128,20 @@ export function CompraRapida() {
                     >
                       <span className="flex items-center gap-3">
                         <input type="radio" name="edicion" className="sr-only" checked={on} onChange={() => pedido.elegir(e.id)} />
-                        <span aria-hidden className={`grid size-4 place-items-center border ${on ? 'border-neon bg-neon text-void' : 'border-line-2'}`}>
+                        <span aria-hidden className={`grid size-4 shrink-0 place-items-center border ${on ? 'border-neon bg-neon text-void' : 'border-line-2'}`}>
                           {on && <Check className="size-3" strokeWidth={3} />}
                         </span>
                         <span className="text-bone">
                           {e.nombre}
                           {e.formato && <span className="text-mist"> · {e.formato}</span>}
+                          {e.tipo === 'mentoria' && (
+                            <span className="mt-0.5 block font-mono text-[0.62rem] tracking-[0.16em] text-mist uppercase">
+                              Con el autor · 2 transmisiones
+                            </span>
+                          )}
                         </span>
                       </span>
+                      {e.tipo === 'mentoria' && !precio(e.precio) && <AvatarAutor className="size-9" sizes="36px" />}
                       {precio(e.precio) && <span className="font-mono text-sm text-bone tabular-nums">{precio(e.precio)}</span>}
                     </label>
                   )

@@ -4,6 +4,7 @@ import { anclas } from '@/lib/site'
 import { BotonComprar } from './ui/BotonComprar'
 import { Conejo } from './ui/Marca'
 import { Resaltado, Rotulo } from './ui/Resaltado'
+import { numeroSeccion } from '@/lib/navegacion'
 
 /**
  * Transición narrativa: mucho espacio negativo y el texto que aparece al hacer scroll.
@@ -18,7 +19,7 @@ export function Despertar() {
       <div aria-hidden className="noise pointer-events-none absolute inset-0 -z-10" />
 
       <div className="wrap flex min-h-[100svh] flex-col justify-center py-28 md:py-36" data-despertar-pin>
-        <Rotulo n="01">Transmisión entrante</Rotulo>
+        <Rotulo n={numeroSeccion(anclas.descubre)}>Transmisión entrante</Rotulo>
 
         {/* DESPERTAR: contorno que se llena de luz al avanzar */}
         <h2

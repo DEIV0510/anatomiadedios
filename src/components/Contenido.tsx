@@ -3,6 +3,7 @@ import { ejes } from '@/data/libro'
 import { anclas } from '@/lib/site'
 import { BotonComprar } from './ui/BotonComprar'
 import { Rotulo } from './ui/Resaltado'
+import { numeroSeccion } from '@/lib/navegacion'
 
 const ICONOS = { atom: Atom, sparkles: Sparkles, eye: Eye, box: Box, rabbit: Rabbit }
 
@@ -17,7 +18,7 @@ export function Contenido() {
       <div className="wrap">
         <div className="grid gap-8 lg:grid-cols-12">
           <div className="lg:col-span-7">
-            <Rotulo n="04">Contenido</Rotulo>
+            <Rotulo n={numeroSeccion(anclas.contenido)}>Contenido</Rotulo>
             <h2 id="contenido-titulo" className="title-section mt-6" data-split>
               Lo que encontrarás <span className="hl">dentro</span>
             </h2>

@@ -36,7 +36,7 @@ export function preguntas(): Pregunta[] {
       ? [
           {
             q: '¿Qué es la mentoría personalizada?',
-            a: `Es el acompañamiento personalizado por parte del autor, ${libro.autorNombre}: dos transmisiones entre el autor y el lector. Se pide por WhatsApp desde «Elige tu experiencia», con el mensaje ya escrito.`,
+            a: `Es el acompañamiento personalizado por parte del autor, ${libro.autorNombre}: dos transmisiones entre el autor y el lector. Se pide por WhatsApp con el botón «Comprar mentoría» (en su sección o en «Elige tu experiencia»): el mensaje ya va escrito.`,
             falta: 'mentoría',
           },
         ]

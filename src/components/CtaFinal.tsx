@@ -1,6 +1,7 @@
 import { ArrowRight } from 'lucide-react'
 import { confianza, ediciones, libro, narrativa } from '@/data/libro'
 import { anclas } from '@/lib/site'
+import { AvatarAutor } from './ui/AvatarAutor'
 import { BotonComprar } from './ui/BotonComprar'
 import { Conejo } from './ui/Marca'
 import { Pendiente } from './ui/Pendiente'
@@ -46,20 +47,20 @@ export function CtaFinal() {
 
         {/* Acceso secundario a la mentoría: abre la compra rápida con ella elegida */}
         {mentoria && (
-          <a
-            href={`#${anclas.ediciones}`}
-            data-comprar={mentoria.id}
-            className="group mt-10 inline-flex min-h-11 flex-wrap items-center justify-center gap-x-3 gap-y-1 border-t border-line pt-8 font-mono text-[0.72rem] tracking-[0.18em] text-mist uppercase transition-colors hover:text-neon"
-            data-reveal
-          >
-            <span>
+          <div className="mt-12 flex w-full flex-col items-center gap-4 border-t border-line pt-10 sm:w-auto sm:px-10" data-reveal>
+            <p className="hud">
               <span className="text-neon">&gt;</span> ¿Quieres el acompañamiento del autor?
-            </span>
-            <span className="flex items-center gap-2 text-bone underline decoration-neon/60 underline-offset-[6px] group-hover:text-neon">
-              Mentoría personalizada
-              <ArrowRight aria-hidden className="size-4 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={1.75} />
-            </span>
-          </a>
+            </p>
+            <a
+              href={`#${anclas.mentoria}`}
+              data-comprar={mentoria.id}
+              className="btn-ghost group min-h-14 w-full gap-4 py-2 pr-5 pl-2 sm:w-auto"
+            >
+              <AvatarAutor className="size-10" />
+              <span>Mentoría personalizada</span>
+              <ArrowRight aria-hidden className="ml-auto size-4 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={1.75} />
+            </a>
+          </div>
         )}
       </div>
     </section>

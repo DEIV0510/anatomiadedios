@@ -5,6 +5,7 @@
 //                        como póster AVIF/WebP (coincide con el arranque del video: sin salto).
 //   libro-mockup.png  -> la portada aplanada (homografía, sin redibujar) para el libro 3D, y el
 //                        mockup original optimizado para la tarjeta del producto.
+//   autor-libro.jpg   -> el autor con el libro (sección de la mentoría) y su rostro (avatares).
 //   assets/brand      -> favicon.ico, apple-icon.png, imagen Open Graph.
 //
 // Escribe src/data/media.json con rutas, anchos y tamaños reales para el componente <Picture>.
@@ -132,6 +133,17 @@ const mockupJpg = path.join(OUT, 'libro-mockup.jpg')
 if (!fresh(mockupJpg)) await sharp(MOCKUP).resize({ width: 1200 }).jpeg({ quality: 84, mozjpeg: true }).toFile(mockupJpg)
 
 // ---------------------------------------------------------------------------------------------
+// 2b. El autor con el libro (foto del libro, para la mentoría). Llegó en 720x1280: se recorta y
+//     nunca se amplía. 3:4 con gorra, rostro, libro y mano; y el rostro solo para los avatares.
+//     Los recortes van en PNG (sin pérdida) antes de comprimir a AVIF/WebP.
+// ---------------------------------------------------------------------------------------------
+const AUTOR = path.join(SRC, 'autor-libro.jpg')
+const autorFoto = await sharp(AUTOR).extract({ left: 0, top: 100, width: 720, height: 960 }).png().toBuffer()
+const autor = await responsive(autorFoto, 'autor-libro', [240, 480, 720], { avifQ: 58, webpQ: 82 })
+const autorRostro = await sharp(AUTOR).extract({ left: 350, top: 195, width: 310, height: 310 }).png().toBuffer()
+const avatar = await responsive(autorRostro, 'autor-avatar', [96, 192, 288])
+
+// ---------------------------------------------------------------------------------------------
 // 3. Iconos: favicon.ico (16/32/48), apple-icon.png (180). icon.svg se escribe a mano en src/app.
 // ---------------------------------------------------------------------------------------------
 const MARK = path.join(BRAND, 'mark.svg')
@@ -231,6 +243,8 @@ const media = {
   },
   cover,
   mockup: { ...mockup, jpg: '/media/libro-mockup.jpg' },
+  autor,
+  avatar,
 }
 fs.writeFileSync(MANIFEST, JSON.stringify(media, null, 2) + '\n')
 

@@ -11,6 +11,7 @@ import { Footer } from '@/components/Footer'
 import { Hero } from '@/components/Hero'
 import { Intro } from '@/components/Intro'
 import { MasQueUnLibro } from '@/components/MasQueUnLibro'
+import { Mentoria } from '@/components/Mentoria'
 import { Navbar } from '@/components/Navbar'
 import { Pagos } from '@/components/Pagos'
 import { PanelPendientes } from '@/components/PanelPendientes'
@@ -33,6 +34,7 @@ export default function Home() {
         <Concepto />
         <MasQueUnLibro />
         <Contenido />
+        <Mentoria />
         <Testimonios />
         <Ediciones />
         <Pagos />

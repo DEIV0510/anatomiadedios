@@ -17,8 +17,10 @@ export const site = {
 export const anclas = {
   inicio: 'inicio',
   descubre: 'descubre',
+  concepto: 'concepto',
   libro: 'el-libro',
   contenido: 'contenido',
+  mentoria: 'mentoria',
   testimonios: 'testimonios',
   ediciones: 'ediciones',
   pago: 'pago',

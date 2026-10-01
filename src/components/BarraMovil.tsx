@@ -1,13 +1,16 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { ArrowRight } from 'lucide-react'
-import { libro } from '@/data/libro'
+import { ArrowRight, MessageCircle } from 'lucide-react'
+import { ediciones, libro } from '@/data/libro'
 import { precio } from '@/lib/format'
 import { usePedido } from '@/lib/pedido'
 import { anclas } from '@/lib/site'
+import { AvatarAutor } from './ui/AvatarAutor'
 import { Trace } from './ui/BotonComprar'
 import { Pendiente } from './ui/Pendiente'
+
+const mentoria = ediciones.find((e) => e.tipo === 'mentoria')
 
 /**
  * Barra fija inferior en móvil: aparece al salir del hero y se esconde en el cierre final
@@ -44,7 +47,8 @@ export function BarraMovil() {
     >
       <div className="flex h-16 items-center gap-3 px-4">
         <div className="min-w-0 flex-1">
-          <p className="truncate font-display text-[0.85rem] font-bold tracking-[0.08em] text-bone">
+          {/* En dos líneas si hace falta (con el avatar al lado, en una sola se cortaba) */}
+          <p className="line-clamp-2 font-display text-[0.8rem] leading-tight font-bold tracking-[0.06em] text-balance text-bone">
             {edicion?.tipo === 'mentoria' ? edicion.nombre : libro.titulo}
           </p>
           {valor ? (
@@ -53,6 +57,21 @@ export function BarraMovil() {
             <Pendiente dato="$precio" className="mt-0.5 px-1.5 py-0 text-[0.58rem]" />
           )}
         </div>
+        {/* Acceso a la mentoría: el rostro del autor con el globo de chat (abre la compra rápida
+            con la mentoría elegida). Sobra si la mentoría ya es la elegida. */}
+        {mentoria && edicion?.tipo !== 'mentoria' && (
+          <a
+            href={`#${anclas.mentoria}`}
+            data-comprar={mentoria.id}
+            aria-label="Mentoría personalizada con el autor"
+            className="relative grid size-12 shrink-0 place-items-center"
+          >
+            <AvatarAutor className="size-11" sizes="44px" />
+            <span aria-hidden className="absolute -right-0.5 -bottom-0.5 grid size-5 place-items-center rounded-full bg-neon text-void ring-2 ring-void">
+              <MessageCircle className="size-3" strokeWidth={2.5} />
+            </span>
+          </a>
+        )}
         <a href={`#${anclas.ediciones}`} data-comprar={edicion?.id ?? ''} className="btn-neon min-h-12 shrink-0 gap-2 px-5 text-[0.72rem]">
           <Trace />
           <span>Comprar</span>

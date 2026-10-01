@@ -14,6 +14,7 @@ import { Pendiente } from './ui/Pendiente'
 import { Picture } from './ui/Picture'
 import { Rotulo } from './ui/Resaltado'
 import { VisualMentoria } from './ui/VisualMentoria'
+import { numeroSeccion } from '@/lib/navegacion'
 
 /**
  * «Elige tu experiencia»: el libro y la mentoría personalizada (src/data/libro.ts).
@@ -30,7 +31,7 @@ export function Ediciones() {
       <div className="wrap">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
-            <Rotulo n="06">Ediciones</Rotulo>
+            <Rotulo n={numeroSeccion(anclas.ediciones)}>Ediciones</Rotulo>
             <h2 id="ediciones-titulo" className="title-section mt-6" data-split>
               Elige tu <span className="hl">experiencia</span>
             </h2>
@@ -91,8 +92,11 @@ function Tarjeta({ e, i, varias, activa, cantidad }: { e: Edicion; i: number; va
       {/* Datos y compra */}
       <div className="relative z-10 flex flex-col bg-gradient-to-b from-deep to-abyss p-6 sm:p-8 lg:p-10">
         <div className="flex items-center justify-between gap-4">
-          <p className="hud">
-            <span className="text-neon">&gt;</span> Experiencia_{String(i + 1).padStart(2, '0')}
+          <p className="hud flex flex-wrap items-center gap-x-3 gap-y-2">
+            <span>
+              <span className="text-neon">&gt;</span> Experiencia_{String(i + 1).padStart(2, '0')}
+            </span>
+            {!libroFisico && <span className="border border-neon/60 px-2 py-0.5 text-[0.6rem] text-neon">Con el autor</span>}
           </p>
           <Seleccion e={e} activa={activa} varias={varias} />
         </div>

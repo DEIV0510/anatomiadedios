@@ -2,11 +2,14 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { ArrowRight, Menu, X } from 'lucide-react'
-import { libro } from '@/data/libro'
+import { ediciones, libro } from '@/data/libro'
 import { enlaces } from '@/lib/navegacion'
 import { anclas } from '@/lib/site'
+import { AvatarAutor } from './ui/AvatarAutor'
 import { Marca } from './ui/Marca'
 import { Trace } from './ui/BotonComprar'
+
+const mentoria = ediciones.find((e) => e.tipo === 'mentoria')
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
@@ -87,8 +90,10 @@ export function Navbar() {
               <a
                 href={`#${l.id}`}
                 aria-current={activo === l.id ? 'location' : undefined}
-                className="group/link relative flex min-h-11 items-center px-2 font-mono text-[0.68rem] tracking-[0.18em] whitespace-nowrap text-mist uppercase transition-colors hover:text-neon aria-[current=location]:text-neon xl:px-3 xl:text-[0.7rem] xl:tracking-[0.2em]"
+                className={`group/link relative flex min-h-11 items-center gap-2 px-2 font-mono text-[0.68rem] tracking-[0.18em] whitespace-nowrap uppercase transition-colors hover:text-neon aria-[current=location]:text-neon xl:px-3 xl:text-[0.7rem] xl:tracking-[0.2em] ${l.destacado ? 'text-bone' : 'text-mist'}`}
               >
+                {/* La mentoría lleva su luz para no pasar desapercibida */}
+                {l.destacado && <span aria-hidden className="size-1.5 animate-pulse rounded-full bg-neon shadow-[0_0_8px_var(--color-neon)]" />}
                 {l.label}
                 <span
                   aria-hidden
@@ -153,6 +158,9 @@ export function Navbar() {
                 >
                   <span className="font-mono text-xs font-normal tracking-[0.2em] text-neon">{String(i + 1).padStart(2, '0')}</span>
                   {l.label}
+                  {l.destacado && (
+                    <span className="ml-auto border border-neon/60 px-2 py-1 font-mono text-[0.62rem] font-normal tracking-[0.2em] text-neon">Con el autor</span>
+                  )}
                 </a>
               </li>
             ))}
@@ -163,6 +171,13 @@ export function Navbar() {
               <span>Comprar el libro</span>
               <ArrowRight aria-hidden className="btn-arrow size-5" strokeWidth={1.75} />
             </a>
+            {mentoria && (
+              <a href={`#${anclas.mentoria}`} data-comprar={mentoria.id} onClick={cerrar} className="btn-ghost group min-h-14 w-full gap-4 py-2 pr-5 pl-2">
+                <AvatarAutor className="size-10" />
+                <span>Mentoría personalizada</span>
+                <ArrowRight aria-hidden className="ml-auto size-4 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={1.75} />
+              </a>
+            )}
             <p className="hud text-center">{libro.autor}</p>
           </div>
         </div>

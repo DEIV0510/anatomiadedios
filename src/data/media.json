@@ -85,5 +85,49 @@
     ],
     "lqip": "data:image/webp;base64,UklGRo4AAABXRUJQVlA4IIIAAAAwBQCdASoYABkAPu1wsVKppiSiqAgBMB2JYgCsMoABfTvRkkfr0CTp9BNBLp1B4gh3IAD+5f/e/9SwIZC45JpxloaSu95EGN91B/BU4fLABiitoaipIgwXXmA+5PEwsEZSkKIL2KyxnbmMYNwN1HW33svasv8rEbWJ2laVqTIW47AA",
     "jpg": "/media/libro-mockup.jpg"
+  },
+  "autor": {
+    "width": 720,
+    "height": 960,
+    "variants": [
+      {
+        "w": 240,
+        "avif": "/media/autor-libro-240.avif",
+        "webp": "/media/autor-libro-240.webp"
+      },
+      {
+        "w": 480,
+        "avif": "/media/autor-libro-480.avif",
+        "webp": "/media/autor-libro-480.webp"
+      },
+      {
+        "w": 720,
+        "avif": "/media/autor-libro-720.avif",
+        "webp": "/media/autor-libro-720.webp"
+      }
+    ],
+    "lqip": "data:image/webp;base64,UklGRpYAAABXRUJQVlA4IIoAAABwBQCdASoYACAAPu1sr0+ppiSiKAqpMB2JYwC+cIAFq67I6dvnYdoxQJIWjO6g4EQIJwAAAP79FznncvXdJPU7iam3zxlKG7Wxoe2SdVcUoYg4BDrWr0goGO/AMwmqqXQ4jq37kOAktc1th5AizaY28Qu1O0SZapot4J6VtOHWjZ3ouPuuaY6AAAA="
+  },
+  "avatar": {
+    "width": 310,
+    "height": 310,
+    "variants": [
+      {
+        "w": 96,
+        "avif": "/media/autor-avatar-96.avif",
+        "webp": "/media/autor-avatar-96.webp"
+      },
+      {
+        "w": 192,
+        "avif": "/media/autor-avatar-192.avif",
+        "webp": "/media/autor-avatar-192.webp"
+      },
+      {
+        "w": 288,
+        "avif": "/media/autor-avatar-288.avif",
+        "webp": "/media/autor-avatar-288.webp"
+      }
+    ],
+    "lqip": "data:image/webp;base64,UklGRpwAAABXRUJQVlA4IJAAAABwBQCdASoYABgAPu1oqU+ppiOiKA1RMB2JZgCdMswBiL95WecHrmxZ6wJ48R4voFGLCzNoAP6JOn4GPWHHlgOZUcwC2RC96YT6WrkH4KobeG21acxTcLxCa8/gmnG8UzdGUjfzSAwGm8RjWhRqDZrcPHjjvWrlJHPYOs09z+ufZUsviDVNHsNhdMusJNZAAAA="
   }
 }

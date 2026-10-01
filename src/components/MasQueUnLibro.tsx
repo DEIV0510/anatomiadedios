@@ -5,6 +5,7 @@ import { BotonComprar } from './ui/BotonComprar'
 import { Pendiente } from './ui/Pendiente'
 import { Picture } from './ui/Picture'
 import { Rotulo } from './ui/Resaltado'
+import { numeroSeccion } from '@/lib/navegacion'
 
 /**
  * El libro como protagonista: libro 3D de CSS con la portada real. Reacciona al cursor
@@ -20,7 +21,7 @@ export function MasQueUnLibro() {
       />
       <div className="wrap grid items-center gap-14 lg:grid-cols-12 lg:gap-6" data-libro-pin>
         <div className="lg:col-span-4">
-          <Rotulo n="03">El libro</Rotulo>
+          <Rotulo n={numeroSeccion(anclas.libro)}>El libro</Rotulo>
           <h2 id="libro-titulo" className="title-section mt-6" data-split>
             Más que un <span className="hl">libro</span>
           </h2>

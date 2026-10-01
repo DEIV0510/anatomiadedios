@@ -3,6 +3,7 @@ import { metodosPago, seguridadPago } from '@/data/libro'
 import { anclas, IS_DEV } from '@/lib/site'
 import { Pendiente } from './ui/Pendiente'
 import { Rotulo } from './ui/Resaltado'
+import { numeroSeccion } from '@/lib/navegacion'
 
 const ICONO = { tarjeta: CreditCard, banco: Landmark, billetera: Smartphone, efectivo: Banknote, otro: CircleDollarSign }
 
@@ -23,7 +24,7 @@ export function Pagos() {
           <div aria-hidden className="pointer-events-none absolute -top-40 right-0 size-96 rounded-full bg-[radial-gradient(closest-side,rgb(57_255_136/0.1),transparent)]" />
           <div className="relative grid gap-10 lg:grid-cols-12 lg:items-end">
             <div className="lg:col-span-5">
-              <Rotulo n="07">Pago</Rotulo>
+              <Rotulo n={numeroSeccion(anclas.pago)}>Pago</Rotulo>
               <h2 id="pago-titulo" className="mt-6 font-display text-[clamp(1.8rem,3.4vw,3rem)] leading-tight font-bold uppercase">
                 Métodos de pago y <span className="hl">seguridad</span>
               </h2>

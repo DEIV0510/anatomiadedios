@@ -11,6 +11,9 @@ export const media = raw as {
   }
   cover: Imagen & { lqip: string }
   mockup: Imagen & { lqip: string; jpg: string }
+  /** El autor con el libro (3:4) y su rostro (cuadrado) */
+  autor: Imagen & { lqip: string }
+  avatar: Imagen & { lqip: string }
 }
 
 export const srcSet = (img: Imagen, f: 'avif' | 'webp') => img.variants.map((v) => `${v[f]} ${v.w}w`).join(', ')

@@ -1,9 +1,10 @@
 import { BookOpen } from 'lucide-react'
-import { Marca } from './Marca'
+import { media } from '@/lib/media'
+import { Picture } from './Picture'
 
 /**
- * Visual de la mentoría: no hay foto del autor en los materiales, así que en lugar de inventar
- * una imagen se dibuja lo que es: dos transmisiones entre el autor y el lector.
+ * Visual de la mentoría para su tarjeta: lo que es, dos transmisiones entre el autor (su rostro,
+ * de la foto del libro) y el lector. La foto completa va en la sección propia de la mentoría.
  * Animaciones solo con transform/opacity (compuestas en GPU); quietas con «reducir movimiento».
  */
 export function VisualMentoria() {
@@ -23,7 +24,13 @@ export function VisualMentoria() {
       {/* Autor <-> Lector */}
       <div className="absolute inset-x-[9%] top-1/2 flex -translate-y-[62%] items-center">
         <Nodo etiqueta="Autor">
-          <Marca className="size-9 text-bone md:size-11" />
+          <Picture
+            img={media.avatar}
+            alt=""
+            sizes="(min-width: 768px) 112px, 80px"
+            className="absolute inset-0 overflow-hidden rounded-full"
+            imgClassName="size-full object-cover"
+          />
         </Nodo>
         <div className="mentoria-linea relative mx-2 h-px flex-1 md:mx-4">
           <span className="mentoria-pulso mentoria-pulso--ida">

@@ -1,4 +1,4 @@
-import { contacto, libro, politicasUrl, redes } from '@/data/libro'
+import { contacto, ediciones, libro, politicasUrl, redes } from '@/data/libro'
 import { anclas } from '@/lib/site'
 import { Marca } from './ui/Marca'
 import { Pendiente } from './ui/Pendiente'
@@ -13,6 +13,7 @@ export function Footer() {
   const links = [
     { label: 'Inicio', href: `#${anclas.inicio}` },
     { label: 'El libro', href: `#${anclas.libro}` },
+    ...(ediciones.some((e) => e.tipo === 'mentoria') ? [{ label: 'Mentoría', href: `#${anclas.mentoria}` }] : []),
     { label: 'Ediciones', href: `#${anclas.ediciones}` },
     { label: 'FAQ', href: `#${anclas.faq}` },
     ...(contactoHref ? [{ label: 'Contacto', href: contactoHref, externo: true }] : []),

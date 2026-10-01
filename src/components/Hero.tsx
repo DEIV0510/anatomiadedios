@@ -1,7 +1,8 @@
 import { ChevronDown } from 'lucide-react'
-import { confianza, libro } from '@/data/libro'
+import { confianza, ediciones, libro } from '@/data/libro'
 import { media, srcSet } from '@/lib/media'
 import { anclas } from '@/lib/site'
+import { AccesoMentoria } from './ui/AccesoMentoria'
 import { BotonComprar } from './ui/BotonComprar'
 import { Pendiente } from './ui/Pendiente'
 import { HeroVideo } from './HeroVideo'
@@ -23,6 +24,7 @@ const PARTICULAS = [
 export function Hero() {
   const d = media.hero.desktop.poster
   const m = media.hero.mobile.poster
+  const hayMentoria = ediciones.some((e) => e.tipo === 'mentoria')
   return (
     <section id={anclas.inicio} aria-labelledby="hero-titulo" className="relative isolate flex min-h-[100svh] flex-col overflow-hidden">
       {/* ---------- Video a sangre: en móvil ocupa la parte alta y se funde en negro ---------- */}
@@ -84,7 +86,7 @@ export function Hero() {
       {/* ---------- Contenido ---------- */}
       {/* Anclado desde arriba (no con mt-auto): si al cargar la fuente cambia la altura del
           bloque, no se desplaza todo el texto (CLS) */}
-      <div className="wrap relative z-10 max-w-none pt-[max(calc(var(--nav-h)+8rem),calc(100svh-22.5rem))] pb-[max(2.25rem,env(safe-area-inset-bottom))] md:pt-[max(calc(var(--nav-h)+3rem),calc(50svh-15.5rem))] md:pb-24">
+      <div className="wrap relative z-10 max-w-none pt-[max(calc(var(--nav-h)+8rem),calc(100svh-26.75rem))] pb-[max(2.25rem,env(safe-area-inset-bottom))] md:pt-[max(calc(var(--nav-h)+3rem),calc(50svh-17.5rem))] md:pb-24 lg:pt-[max(calc(var(--nav-h)+3rem),calc(50svh-15.5rem))]">
         <div className="max-w-[37rem] lg:max-w-[40rem]">
           <p className="hud hero-rise flex items-center gap-3 whitespace-nowrap" style={{ '--d': '0s' } as React.CSSProperties}>
             <span aria-hidden className="size-1.5 animate-pulse bg-neon shadow-[0_0_10px_var(--color-neon)]" />
@@ -111,10 +113,15 @@ export function Hero() {
             La evidencia oculta que une la <span className="hl">ciencia</span> y la <span className="hl">espiritualidad</span>
           </p>
 
-          <div className="hero-rise mt-7 md:mt-10" style={{ '--d': '0.3s' } as React.CSSProperties}>
+          {/* CTA principal + acceso a la mentoría (al lado en escritorio, debajo en móvil) */}
+          <div
+            className="hero-rise mt-7 flex flex-col gap-3 sm:items-start md:mt-10 lg:flex-row lg:items-center lg:gap-5"
+            style={{ '--d': '0.3s' } as React.CSSProperties}
+          >
             <BotonComprar size="xl" className="w-full sm:w-auto">
               Comprar el libro
             </BotonComprar>
+            {hayMentoria && <AccesoMentoria className="w-full sm:w-auto" />}
           </div>
 
           <div

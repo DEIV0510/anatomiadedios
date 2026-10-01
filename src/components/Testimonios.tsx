@@ -3,6 +3,7 @@ import { anclas, IS_DEV } from '@/lib/site'
 import { BotonComprar } from './ui/BotonComprar'
 import { Pendiente } from './ui/Pendiente'
 import { Rotulo } from './ui/Resaltado'
+import { numeroSeccion } from '@/lib/navegacion'
 
 /**
  * Prueba social con testimonios REALES (src/data/libro.ts -> testimonios). En los materiales
@@ -17,7 +18,7 @@ export function Testimonios() {
   return (
     <section id={anclas.testimonios} aria-labelledby="testimonios-titulo" className="relative py-24 md:py-36">
       <div className="wrap">
-        <Rotulo n="05">Testimonios</Rotulo>
+        <Rotulo n={numeroSeccion(anclas.testimonios)}>Testimonios</Rotulo>
         <h2 id="testimonios-titulo" className="title-section mt-6 max-w-4xl" data-split>
           Quienes ya cruzaron el <span className="hl">umbral</span>
         </h2>
